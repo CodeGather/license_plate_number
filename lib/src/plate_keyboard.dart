@@ -92,25 +92,27 @@ class _PlateKeyboardState extends State<PlateKeyboard> {
       alphabets[0].forEach(
           (element) => keys.add(_buildKeyboardButton(element, _index > 0)));
 
+      /// 学
+      keys.add(_buildKeyboardButton(specials[0], _index >= widget.plateNumbers.length-1));
       /// 领
-      keys.add(_buildKeyboardButton(specials[0], _index >= 6));
+      keys.add(_buildKeyboardButton(specials[1], _index >= widget.plateNumbers.length-1));
 
       /// 字母 A ~ L
       alphabets[1].forEach(
           (element) => keys.add(_buildKeyboardButton(element, _index > 0)));
 
       /// 警
-      keys.add(_buildKeyboardButton(specials[1], _index >= 6));
+      keys.add(_buildKeyboardButton(specials[2], _index >= widget.plateNumbers.length-1));
 
       /// 字母 Z ~ M
       alphabets[2].forEach(
           (element) => keys.add(_buildKeyboardButton(element, _index > 0)));
 
       /// 港
-      keys.add(_buildKeyboardButton(specials[2], _index >= 6));
+      keys.add(_buildKeyboardButton(specials[3], _index >= widget.plateNumbers.length-1));
 
       /// 澳
-      keys.add(_buildKeyboardButton(specials[3], _index >= 6));
+      keys.add(_buildKeyboardButton(specials[4], _index >= widget.plateNumbers.length-1));
     }
 
     /// 退格
@@ -126,7 +128,7 @@ class _PlateKeyboardState extends State<PlateKeyboard> {
       disabledColor: widget.styles.keyboardButtonDisabledColor,
       onPressed: enable
           ? () {
-              if (_index <= 6) {
+              if (_index <= widget.plateNumbers.length-1) {
                 widget.onChange(_index, data);
                 _index++;
                 setState(() {});

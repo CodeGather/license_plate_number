@@ -6,13 +6,14 @@ class PlateInputField extends StatefulWidget {
   const PlateInputField({
     this.placeHolder = '',
     this.styles = PlateStyles.dark,
-    this.inputFieldWidth = 40,
+    this.inputFieldWidth = 35,
     this.inputFieldHeight = 54,
     this.keyboardController,
     this.onChanged,
+    this.newEnergy
   })  : assert(placeHolder != null, 'plateNumber must be non-null.'),
-        assert(placeHolder.length <= 7,
-            'plateNumber\'s length should be less than 7.');
+        assert(placeHolder.length <= 8,
+            'plateNumber\'s length should be less than 8.');
 
   /// 车牌号
   final String placeHolder;
@@ -35,6 +36,8 @@ class PlateInputField extends StatefulWidget {
   /// * [value] - 车牌号字符串
   final void Function(List<String> array, String value) onChanged;
 
+  final bool newEnergy;
+
   @override
   _PlateInputFieldState createState() => _PlateInputFieldState();
 }
@@ -42,7 +45,7 @@ class PlateInputField extends StatefulWidget {
 class _PlateInputFieldState extends State<PlateInputField>
     with SingleTickerProviderStateMixin {
   /// 车牌号码数组
-  final List<String> _plateNumbers = ["", "", "", "", "", "", ""];
+  List<String> _plateNumbers;// = List.filled(widget.newClear?8:7, "");//["", "", "", "", "", "", ""];
 
   /// 当前光标位置
   int _cursorIndex = 0;
@@ -53,14 +56,25 @@ class _PlateInputFieldState extends State<PlateInputField>
   /// 键盘控制器
   KeyboardController _keyboardController;
 
+  String placeHolder='';
+
   @override
   void initState() {
     super.initState();
     String plateNumber = widget.placeHolder;
     if (plateNumber.isNotEmpty) {
+      if(plateNumber.length==8){
+        _plateNumbers = List.filled(8, "");
+//        widget.newClear=true;
+      }else{
+        _plateNumbers = List.filled(7, "");
+//        widget.newClear=false;
+      }
       List<String> numbers = plateNumber.split('');
       _plateNumbers.replaceRange(0, numbers.length, numbers);
       _cursorIndex = numbers.length;
+    }else{
+      _plateNumbers = List.filled((widget.newEnergy??false)?8:7, "");
     }
     _controller = AnimationController(
       duration: const Duration(milliseconds: 400),
@@ -81,10 +95,15 @@ class _PlateInputFieldState extends State<PlateInputField>
     _keyboardController.dispose();
   }
 
+  @override
+  void reassemble(){
+    super.reassemble();
+  }
+
   void onPlateNumberChanged(int index, String value) {
     _plateNumbers[index] = value;
     if (value.isNotEmpty) {
-      _cursorIndex = index < 6 ? index + 1 : 6;
+      _cursorIndex = index < _plateNumbers.length-1 ? index + 1 :  _plateNumbers.length-1;
     } else if (value.isEmpty) {
       _cursorIndex = index > 0 ? index - 1 : 0;
     }
@@ -92,13 +111,29 @@ class _PlateInputFieldState extends State<PlateInputField>
       widget.onChanged(_plateNumbers, _plateNumbers.join());
     }
     setState(() {});
-    if (index >= 6 && _cursorIndex == 6) {
+    if (index >=  _plateNumbers.length-1 && _cursorIndex ==  _plateNumbers.length-1) {
       _keyboardController.hideKeyboard();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if((widget.newEnergy??false)&&_plateNumbers.length!=8){
+      var tempList=_plateNumbers.getRange(0, _plateNumbers.length);
+      _plateNumbers=List.filled(8, "");
+      _plateNumbers.setRange(0, tempList.length, tempList);
+      _keyboardController.plateNumbers = _plateNumbers;
+    }else if(!(widget.newEnergy??false)&&_plateNumbers.length==8){
+      _plateNumbers=_plateNumbers.sublist(0,_plateNumbers.length-1);
+      _keyboardController.plateNumbers = _plateNumbers;
+      widget.onChanged(_plateNumbers, _plateNumbers.join());
+    }
+    if(placeHolder!=widget.placeHolder){
+      var plateNumber=widget.placeHolder.split('');
+      _plateNumbers.setRange(0, _plateNumbers.length, plateNumber);
+      placeHolder=widget.placeHolder;
+    }
+
     _keyboardController.cursorIndex = _cursorIndex;
     _keyboardController.styles = widget.styles;
     return WillPopScope(

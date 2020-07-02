@@ -15,6 +15,7 @@ class _MyAppState extends State<MyApp> {
   Brightness _brightness = Brightness.light;
   PlateStyles _plateStyles = PlateStyles.light;
   KeyboardController _keyboardController = KeyboardController();
+  bool _newEnergy=false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +62,7 @@ class _MyAppState extends State<MyApp> {
             padding: EdgeInsets.only(top: 30),
             /// 车牌号输入框
             child: PlateInputField(
+              newEnergy:_newEnergy,
               styles: _plateStyles,
               keyboardController: _keyboardController,
               onChanged: (List<String> array, String value) {

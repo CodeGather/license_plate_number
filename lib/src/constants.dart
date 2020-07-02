@@ -58,7 +58,7 @@ const alphabets = [
     'T',
     'Y',
     'U',
-    'O',
+//    'O',
     'P',
   ],
   [
@@ -84,6 +84,7 @@ const alphabets = [
 ];
 
 const specials = [
+  '学',
   '领',
   '警',
   '港',
